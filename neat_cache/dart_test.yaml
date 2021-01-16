@@ -1,3 +1,0 @@
-tags:
-  ttl:    # use: `pub run test -x ttl`, to skip TTL tests
-  redis:  # use: `pub run test -x redis`, to skip redis tests
