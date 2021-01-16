@@ -1,9 +1,17 @@
-name: dart_neats
-# This should never be published it just locks the dev_dependencies for
-# repository management, so they don't have to be installed globally.
-publish_to: none
+name: neat_cache
+version: 1.0.2-dev
+description: |
+  A neat cache abstraction for wrapping in-memory or redis caches.
+homepage: https://github.com/google/dart-neats/tree/master/neat_cache
+repository: https://github.com/google/dart-neats.git
+issue_tracker: https://github.com/google/dart-neats/labels/pkg:neat_cache
+dependencies:
+  convert: ^2.1.1
+  logging: '^0.11.3'
+  retry: ^3.0.0
+  dartis: ^0.5.0
 dev_dependencies:
-  mono_repo: ^3.0.0
-  pubspec_parse: ^0.1.4
+  test: ^1.5.1
+  pedantic: ^1.4.0
 environment:
-  sdk: '>=2.7.0 <3.0.0'
+  sdk: '>=2.3.0 <3.0.0'

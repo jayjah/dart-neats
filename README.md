@@ -1,36 +1,39 @@
-Dart Neats [![Build Status](https://travis-ci.org/google/dart-neats.svg?branch=master)](https://travis-ci.org/google/dart-neats)
+Neat Cache
 ==========
-_A collection of a small neat packages for dart._
+
+Abstractions around in-memory caches stores such as redis, with timeouts and
+automatic reconnects.
 
 **Disclaimer:** This is not an officially supported Google product.
 
-This repository is meant as a playground where small _neat_ packages are
-cultivated. If package grows too large and complex and needs a dedicated issue
-tracker it should be moved to a dedicated repository.
+## Example
 
-Each folder in this repository contains a _neat_ `pub` package. This project
-aims to use a separate package whenever it makes sense to have an independent
-major version. This often means splitting functionality into separate packages,
-which can be reused independently.
+```dart
+import 'dart:async' show Future;
+import 'dart:convert' show utf8;
+import 'package:neat_cache/neat_cache.dart';
 
-## Repository Management
-The root `pubspec.yaml` is only intended to lock the development dependencies
-for repository management. When adding new packages or changing `mono_repo.yaml`
-or `mono_pkg.yaml` in a package, make sure to run the following commands to
-update travis configuration.
+Future<void> main() async {
+  final cacheProvider = Cache.redisCacheProvider('redis://localhost:6379');
+  final cache = Cache(cacheProvider);
 
- * `pub get`
- * `pub run mono_repo travis`
+  /// Create a sub-cache using a prefix, and apply a codec to store utf8
+  final userCache = cache.withPrefix('users').withCodec(utf8);
 
-## Contributing
-We love patches and contributions, please refer to [CONTRIBUTING.md][1] for
-technicalities on [CLA][2] and community guidelines. As this project aims to
-build _neat_ packages using other _neat_ packages we might also accept proposals
-for new neat packages, though it's often easier to publish independently.
+  /// Get data form cache
+  String userinfo = await userCache['peter-pan'].get();
+  print(userinfo);
 
-## License
-Unless stated otherwise contents in this repository is licensed under
-Apache License 2.0, see [LICENSE](LICENSE).
+  /// Put data into cache
+  await userCache['winnie'].set('Like honey');
 
-[1]: CONTRIBUTING.md
-[2]: https://cla.developers.google.com/
+  await cacheProvider.close();
+}
+```
+
+
+## Development
+To test the redis `CacheProvider` a redis instance must be running on
+`localhost:6379`, this can be setup with:
+
+ * `docker run --rm -p 127.0.0.1:6379:6379 redis`
