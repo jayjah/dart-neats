@@ -43,7 +43,7 @@ abstract class NeatStatusProvider {
   ///
   /// Returns the current status file, or `null` if no status file has ever
   /// been written.
-  Future<List<int>> get();
+  Future<List<int>?> get();
 
   /// Set the current status file, if status file have not been changed since
   /// last time it was read.
@@ -72,10 +72,10 @@ abstract class NeatStatusProvider {
 }
 
 class _InMemoryNeatStatusProvider implements NeatStatusProvider {
-  List<int> _value;
+  List<int>? _value;
 
   @override
-  Future<List<int>> get() async => _value;
+  Future<List<int>?> get() async => _value;
   @override
   Future<bool> set(List<int> status) async {
     _value = status;
@@ -88,7 +88,7 @@ class _NeatStatusProviderWithRetry extends NeatStatusProvider {
   final RetryOptions _r;
   _NeatStatusProviderWithRetry(this._provider, this._r);
   @override
-  Future<List<int>> get() =>
+  Future<List<int>?> get() =>
       _r.retry(() => _provider.get(), retryIf: (e) => e is Exception);
   @override
   Future<bool> set(List<int> status) =>
@@ -146,11 +146,11 @@ class NeatPeriodicTaskScheduler {
   /// this will continue indefinitely. Thus, it is sensible to pick a high
   /// [timeout], if the operation is expensive and this can be tolerated.
   NeatPeriodicTaskScheduler({
-    @required String name,
-    @required Duration interval,
-    @required Duration timeout,
-    @required NeatPeriodicTask task,
-    NeatStatusProvider status,
+    required String name,
+    required Duration interval,
+    required Duration timeout,
+    required NeatPeriodicTask task,
+    NeatStatusProvider? status,
     Duration minCycle = const Duration(minutes: 5),
     Duration maxCycle = const Duration(hours: 3),
   })  : _name = name,
@@ -230,7 +230,7 @@ class NeatPeriodicTaskScheduler {
   Future<void> _iteration() async {
     _log.finest(() => 'fetching status for "$_name"');
     final status = await _getStatus();
-    if (status.version > NeatTaskStatus.currentVersion) {
+    if (status.version! > NeatTaskStatus.currentVersion) {
       _log.warning(
           'status for "$_name" with newer version found, version: ${status.version}');
       await _sleep(_interval);
@@ -239,7 +239,7 @@ class NeatPeriodicTaskScheduler {
 
     // Find time elapsed since last time the task started running.
     final now = DateTime.now().toUtc();
-    final elapsed = now.difference(status.started);
+    final elapsed = now.difference(status.started!);
     _log.finest(() => 'time elapsed since "$_name" was last started $elapsed');
 
     // If state is 'finished' the delay before next run is _interval, otherwise
@@ -327,7 +327,7 @@ class NeatPeriodicTaskScheduler {
 
     // Find time elapsed since last time the task was started.
     final now = DateTime.now().toUtc();
-    final elapsed = now.difference(status.started);
+    final elapsed = now.difference(status.started!);
 
     // If not running, or timed-out we run the task again.
     if (status.state != 'running' || elapsed > _timeout) {

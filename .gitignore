@@ -4,3 +4,5 @@
 /*/doc/api/
 /.dart_tool/
 /.packages
+.idea/*
+pubspec.lock

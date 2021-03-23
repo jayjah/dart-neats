@@ -31,26 +31,26 @@ class NeatTaskStatus {
 
   /// Magic value that identifies the format, this must always match
   /// [formatIdentifier] or the status object is ignored.
-  final String format;
+  final String? format;
 
   /// Version of the status object.
   ///
   /// If this value is less than [currentVersion] then the object is ignored.
   /// If this value is greater than [currentVersion] a warning is printed and
   /// no further action is taken.
-  final int version;
+  final int? version;
 
   /// Current state, one of 'finished', 'running'.
-  final String state;
+  final String? state;
 
   /// Time the task started running.
-  final DateTime started;
+  final DateTime? started;
 
   /// Owner if this status object, only relevant if [state] is 'running'.
   ///
   /// The [owner] is a random slugid that identifies the process that owns the
   /// exclusive right to run the periodic task.
-  final String owner;
+  final String? owner;
 
   NeatTaskStatus({
     this.format,
@@ -69,9 +69,9 @@ class NeatTaskStatus {
 
   /// Create a new [NeatTaskStatus] updating the given values.
   NeatTaskStatus update({
-    String state,
-    DateTime started,
-    String owner,
+    String? state,
+    DateTime? started,
+    String? owner,
   }) {
     return NeatTaskStatus(
       format: formatIdentifier,
@@ -90,17 +90,17 @@ class NeatTaskStatus {
         owner: '-',
       );
 
-  factory NeatTaskStatus.deserialize(List<int> bytes) {
+  factory NeatTaskStatus.deserialize(List<int>? bytes) {
     if (bytes == null) {
       return _initial();
     }
 
     NeatTaskStatus val;
     try {
-      val = _$NeatTaskStatusFromJson(json.fuse(utf8).decode(bytes));
+      val = _$NeatTaskStatusFromJson(json.fuse(utf8).decode(bytes) as Map<String, dynamic>);
       if (val == null ||
           val.format != formatIdentifier ||
-          val.version < currentVersion) {
+          val.version! < currentVersion) {
         return _initial();
       }
       return val;

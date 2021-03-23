@@ -8,13 +8,13 @@ part of 'neat_status.dart';
 
 NeatTaskStatus _$NeatTaskStatusFromJson(Map<String, dynamic> json) {
   return NeatTaskStatus(
-    format: json['format'] as String,
-    version: json['version'] as int,
-    state: json['state'] as String,
+    format: json['format'] as String?,
+    version: json['version'] as int?,
+    state: json['state'] as String?,
     started: json['started'] == null
         ? null
         : DateTime.parse(json['started'] as String),
-    owner: json['owner'] as String,
+    owner: json['owner'] as String?,
   );
 }
 
